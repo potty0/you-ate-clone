@@ -24,7 +24,7 @@ class CaptureItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 160,
+      height: 125.0 + 16 * 2,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -38,20 +38,41 @@ class CaptureItem extends StatelessWidget {
   }
 
   Widget buildCapture() {
-    return Stack(fit: StackFit.expand, children: [
-      _buildStraightPath(),
-      _buildImage(),
-    ]);
+    if (offTrack) {
+      return Stack(fit: StackFit.expand, children: [
+        _buildStraightTrackPath(),
+        Container(
+          color: Colors.black26,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _buildCurve(top: false),
+              _buildCurve(top: true),
+            ],
+          ),
+        ),
+        _buildImage(),
+      ]);
+    } else {
+      return Stack(fit: StackFit.expand, children: [
+        _buildStraightTrackPath(),
+        _buildImage(),
+      ]);
+    }
   }
 
-  Widget _buildStraightPath() {
+  Widget _buildCurve({bool top}) {
+    return Container(height: 16, color: Colors.yellow, child: CustomPaint(painter: _OffRoutePathPainter(top: top)));
+  }
+
+  Widget _buildStraightTrackPath() {
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-      Container(width: 8, color: Colors.grey[300]),
+      Container(width: 4, color: Colors.grey[300]),
     ]);
   }
 
   Widget _buildImage() {
-    const double offTrackOffset = 40;
+    const double offTrackOffset = 30;
     final double padding = offTrack ? offTrackOffset * 2 : 0;
 
     return Container(
@@ -84,4 +105,41 @@ class CaptureItem extends StatelessWidget {
       ],
     );
   }
+}
+
+class _OffRoutePathPainter extends CustomPainter {
+  final bool top;
+  final double offset;
+
+  _OffRoutePathPainter({this.top = true, this.offset = 30});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    print('_OffRoutePathPainter paint:$size');
+
+    final paint = Paint()
+      ..color = Colors.blue
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 4;
+
+    Path path = Path();
+
+    path.moveTo(size.width / 2, 0);
+
+    final c0x = 0.0;
+    final c0y = size.height * 0.75;
+
+    final c1x = -offset;
+    final c1y = size.height * 0.25;
+
+    final bx = -offset;
+    final by = size.height;
+
+    path.cubicTo(c0x, c0y, c1x, c1y, bx, by);
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(_OffRoutePathPainter oldDelegate) => oldDelegate.top != top;
 }
