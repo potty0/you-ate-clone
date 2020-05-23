@@ -13,6 +13,7 @@ class _YouAteHomeState extends State<YouAteHome> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _buildPage(context, _selectedTabIndex),
+      appBar: _buildHeader(context, _selectedTabIndex),
       bottomNavigationBar: BottomNavigationBar(
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.face), title: Text('Profile')),
@@ -25,8 +26,14 @@ class _YouAteHomeState extends State<YouAteHome> {
     );
   }
 
+  Widget _buildHeader(BuildContext context, int index) {
+    const colors = [Colors.blue, Colors.red, Colors.green];
+    return AppBar(title: Text('Page $index'), backgroundColor: colors[index]);
+  }
+
   Widget _buildPage(BuildContext context, int index) {
     const colors = [Colors.red, Colors.green, Colors.blue];
+
     return Container(
       color: colors[index],
       child: Center(
