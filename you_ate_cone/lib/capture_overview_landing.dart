@@ -6,9 +6,18 @@ class CaptureOverviewLanding extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: ListView.separated(
-        itemBuilder: (context, index) => CaptureItem(
-          offTrack: index % 2 == 0,
-        ),
+        itemBuilder: (context, index) {
+          final offTrack = index % 2 == 0;
+
+          final prevOffTrack = index == 0 ? null : !offTrack;
+          final nextOffTrack = index == 99 ? null : !offTrack;
+
+          return CaptureItem(
+            offTrack: index % 2 == 0,
+            previousOffTrack: prevOffTrack,
+            nextOffTrack: nextOffTrack,
+          );
+        },
         separatorBuilder: (context, index) => Divider(thickness: 0, height: 0),
         itemCount: 100,
       ),
@@ -18,8 +27,15 @@ class CaptureOverviewLanding extends StatelessWidget {
 
 class CaptureItem extends StatelessWidget {
   final bool offTrack;
+  final bool previousOffTrack;
+  final bool nextOffTrack;
 
-  const CaptureItem({Key key, this.offTrack = false}) : super(key: key);
+  const CaptureItem({
+    Key key,
+    this.offTrack = false,
+    this.previousOffTrack = false,
+    this.nextOffTrack,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -38,31 +54,40 @@ class CaptureItem extends StatelessWidget {
   }
 
   Widget buildCapture() {
-    if (offTrack) {
-      return Stack(fit: StackFit.expand, children: [
-        _buildStraightTrackPath(),
-        Container(
-          color: Colors.black26,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _buildCurve(top: false),
-              _buildCurve(top: true),
-            ],
-          ),
-        ),
-        _buildImage(),
-      ]);
-    } else {
-      return Stack(fit: StackFit.expand, children: [
-        _buildStraightTrackPath(),
-        _buildImage(),
-      ]);
-    }
+    return Stack(fit: StackFit.expand, children: [
+      _buildStraightTrackPath(),
+      Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        _buildTopCurve(),
+        _buildBottomCurve(),
+      ]),
+      _buildImage(),
+    ]);
   }
 
-  Widget _buildCurve({bool top}) {
-    return Container(height: 16, color: Colors.yellow, child: CustomPaint(painter: _OffRoutePathPainter(top: top)));
+  Widget _buildTopCurve() {
+    PathState state = PathState.kept;
+    if (previousOffTrack != null && previousOffTrack != offTrack) {
+      state = offTrack ? PathState.opening : PathState.closing;
+    }
+
+    return Container(
+      height: 16,
+      color: Colors.yellow,
+      child: CustomPaint(painter: _OffRoutePathPainter(top: true, state: state)),
+    );
+  }
+
+  Widget _buildBottomCurve() {
+    PathState state = PathState.kept;
+    if (nextOffTrack != null && nextOffTrack != offTrack) {
+      state = offTrack ? PathState.opening : PathState.closing;
+    }
+
+    return Container(
+      height: 16,
+      color: Colors.yellow,
+      child: CustomPaint(painter: _OffRoutePathPainter(top: false, state: state)),
+    );
   }
 
   Widget _buildStraightTrackPath() {
@@ -107,11 +132,14 @@ class CaptureItem extends StatelessWidget {
   }
 }
 
+enum PathState { opening, closing, kept }
+
 class _OffRoutePathPainter extends CustomPainter {
   final bool top;
   final double offset;
+  final PathState state;
 
-  _OffRoutePathPainter({this.top = true, this.offset = 30});
+  _OffRoutePathPainter({this.top = true, this.state = PathState.kept, this.offset = 30});
 
   @override
   void paint(Canvas canvas, Size size) {
