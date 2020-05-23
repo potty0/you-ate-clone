@@ -47,12 +47,29 @@ class Capture extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.blue,
-      child: ListView.builder(
+      child: ListView.separated(
+        itemBuilder: (context, _) => CaptureItem(),
+        separatorBuilder: (context, index) => Divider(thickness: 0),
         itemCount: 100,
-        itemBuilder: (context, index) {
-          return ListTile(title: Text('Item $index'));
-        },
+      ),
+    );
+  }
+}
+
+class CaptureItem extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.pink,
+      height: 160,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Flexible(flex: 1, child: Container(color: Colors.red)),
+          Flexible(flex: 2, child: Container(color: Colors.green)),
+          Flexible(flex: 1, child: Container(color: Colors.blue)),
+        ],
       ),
     );
   }
