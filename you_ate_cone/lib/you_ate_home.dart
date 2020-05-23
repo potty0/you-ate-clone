@@ -1,18 +1,37 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class YouAteHome extends StatelessWidget {
+class YouAteHome extends StatefulWidget {
+  @override
+  _YouAteHomeState createState() => _YouAteHomeState();
+}
+
+class _YouAteHomeState extends State<YouAteHome> {
+  int _selectedTabIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        child: Center(child: Text('You ate!')),
+      body: _buildPage(context, _selectedTabIndex),
+      bottomNavigationBar: BottomNavigationBar(
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.face), title: Text('Profile')),
+          BottomNavigationBarItem(icon: Icon(Icons.stars), title: Text('Capture')),
+          BottomNavigationBarItem(icon: Icon(Icons.message), title: Text('Chat')),
+        ],
+        currentIndex: _selectedTabIndex,
+        onTap: (index) => setState(() => _selectedTabIndex = index),
       ),
-      bottomNavigationBar: BottomNavigationBar(items: [
-        BottomNavigationBarItem(icon: Icon(Icons.face), title: Text('Profile')),
-        BottomNavigationBarItem(icon: Icon(Icons.stars), title: Text('Capture')),
-        BottomNavigationBarItem(icon: Icon(Icons.message), title: Text('Chat')),
-      ]),
+    );
+  }
+
+  Widget _buildPage(BuildContext context, int index) {
+    const colors = [Colors.red, Colors.green, Colors.blue];
+    return Container(
+      color: colors[index],
+      child: Center(
+        child: Text('You ate! - page index:$index'),
+      ),
     );
   }
 }
