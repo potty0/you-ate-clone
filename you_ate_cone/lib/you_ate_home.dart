@@ -12,7 +12,14 @@ class _YouAteHomeState extends State<YouAteHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _buildPage(context, _selectedTabIndex),
+      body: IndexedStack(
+        index: _selectedTabIndex,
+        children: [
+          Profile(),
+          Capture(),
+          Chat(),
+        ],
+      ),
       bottomNavigationBar: BottomNavigationBar(
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.face), title: Text('Profile')),
@@ -23,27 +30,6 @@ class _YouAteHomeState extends State<YouAteHome> {
         onTap: (index) => setState(() => _selectedTabIndex = index),
       ),
     );
-  }
-
-  Widget _buildHeader(BuildContext context, int index) {
-    const colors = [Colors.blue, Colors.red, Colors.green];
-    return AppBar(title: Text('Page $index'), backgroundColor: colors[index]);
-  }
-
-  Widget _buildPage(BuildContext context, int index) {
-    switch (index) {
-      case 0:
-        return Profile();
-
-      case 1:
-        return Capture();
-
-      case 2:
-        return Chat();
-
-      default:
-        throw ArgumentError('Unsupported tab index:$index');
-    }
   }
 }
 
