@@ -13,7 +13,6 @@ class _YouAteHomeState extends State<YouAteHome> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _buildPage(context, _selectedTabIndex),
-      appBar: _buildHeader(context, _selectedTabIndex),
       bottomNavigationBar: BottomNavigationBar(
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.face), title: Text('Profile')),
@@ -32,13 +31,53 @@ class _YouAteHomeState extends State<YouAteHome> {
   }
 
   Widget _buildPage(BuildContext context, int index) {
-    const colors = [Colors.red, Colors.green, Colors.blue];
+    switch (index) {
+      case 0:
+        return Profile();
 
+      case 1:
+        return Capture();
+
+      case 2:
+        return Chat();
+
+      default:
+        throw ArgumentError('Unsupported tab index:$index');
+    }
+  }
+}
+
+class Profile extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
     return Container(
-      color: colors[index],
-      child: Center(
-        child: Text('You ate! - page index:$index'),
+      color: Colors.blue,
+      child: Center(child: Icon(Icons.face, size: 200)),
+    );
+  }
+}
+
+class Capture extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.blue,
+      child: ListView.builder(
+        itemCount: 100,
+        itemBuilder: (context, index) {
+          return ListTile(title: Text('Item $index'));
+        },
       ),
+    );
+  }
+}
+
+class Chat extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.white,
+      child: Center(child: Text('Chat')),
     );
   }
 }
