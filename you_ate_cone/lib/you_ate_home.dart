@@ -60,15 +60,37 @@ class CaptureItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.pink,
       height: 160,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Flexible(flex: 1, child: Container(color: Colors.red)),
-          Flexible(flex: 2, child: Container(color: Colors.green)),
-          Flexible(flex: 1, child: Container(color: Colors.blue)),
+          Flexible(flex: 1, child: Container()),
+          Flexible(
+            flex: 2,
+            child: Container(
+              child: Center(
+                child: Container(
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), color: Colors.grey),
+                ),
+              ),
+            ),
+          ),
+          Flexible(
+            flex: 1,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 12.0),
+                  child: Text('HH:mm', textAlign: TextAlign.right),
+                )
+              ],
+            ),
+          ),
         ],
       ),
     );
