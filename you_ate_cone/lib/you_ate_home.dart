@@ -73,7 +73,11 @@ class CaptureItem extends StatelessWidget {
                 child: Container(
                   width: 120,
                   height: 120,
-                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), color: Colors.grey),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.grey,
+                    boxShadow: [BoxShadow(blurRadius: 20, spreadRadius: 1, color: Colors.black45)],
+                  ),
                 ),
               ),
             ),
