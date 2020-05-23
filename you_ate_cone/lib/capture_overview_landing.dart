@@ -1,25 +1,31 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+const _CaptureImageSize = Size(125, 125);
+const double _PathHeight = 32;
+const double _PathWidth = 4;
+
 class CaptureOverviewLanding extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final itemCount = 30;
+
     return Container(
       child: ListView.separated(
         itemBuilder: (context, index) {
-          final offTrack = index % 2 == 0;
+          final offTrack = index % 2 != 0;
 
           final prevOffTrack = index == 0 ? null : !offTrack;
-          final nextOffTrack = index == 99 ? null : !offTrack;
+          final nextOffTrack = index == itemCount - 1 ? null : !offTrack;
 
           return CaptureItem(
-            offTrack: index % 2 == 0,
+            offTrack: offTrack,
             previousOffTrack: prevOffTrack,
             nextOffTrack: nextOffTrack,
           );
         },
         separatorBuilder: (context, index) => Divider(thickness: 0, height: 0),
-        itemCount: 100,
+        itemCount: itemCount,
       ),
     );
   }
@@ -40,7 +46,7 @@ class CaptureItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 125.0 + 16 * 2,
+      height: _CaptureImageSize.height + _PathHeight,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -65,26 +71,30 @@ class CaptureItem extends StatelessWidget {
   }
 
   Widget _buildTopCurve() {
+    if (previousOffTrack == null) return Container();
+
     PathState state = PathState.kept;
     if (previousOffTrack != null && previousOffTrack != offTrack) {
       state = offTrack ? PathState.opening : PathState.closing;
     }
 
     return Container(
-      height: 16,
+      height: _PathHeight / 2,
       color: Colors.yellow,
       child: CustomPaint(painter: _OffRoutePathPainter(top: true, state: state)),
     );
   }
 
   Widget _buildBottomCurve() {
+    if (nextOffTrack == null) return Container();
+
     PathState state = PathState.kept;
     if (nextOffTrack != null && nextOffTrack != offTrack) {
-      state = offTrack ? PathState.opening : PathState.closing;
+      state = offTrack ? PathState.closing : PathState.opening;
     }
 
     return Container(
-      height: 16,
+      height: _PathHeight / 2,
       color: Colors.yellow,
       child: CustomPaint(painter: _OffRoutePathPainter(top: false, state: state)),
     );
@@ -92,7 +102,7 @@ class CaptureItem extends StatelessWidget {
 
   Widget _buildStraightTrackPath() {
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-      Container(width: 4, color: Colors.grey[300]),
+      Container(width: _PathWidth, color: Colors.grey[300]),
     ]);
   }
 
@@ -105,8 +115,8 @@ class CaptureItem extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.only(right: padding),
           child: Container(
-            width: 120,
-            height: 120,
+            width: _CaptureImageSize.width,
+            height: _CaptureImageSize.width,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               color: Colors.grey,
@@ -143,25 +153,35 @@ class _OffRoutePathPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    print('_OffRoutePathPainter paint:$size');
-
     final paint = Paint()
-      ..color = Colors.blue
+      ..color = top ? Colors.blue : Colors.green
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 4;
+      ..strokeWidth = _PathWidth;
 
     Path path = Path();
 
-    path.moveTo(size.width / 2, 0);
+    double start = size.width / 2;
+    double dx = -offset;
 
-    final c0x = 0.0;
-    final c0y = size.height * 0.75;
+    const double h = _PathHeight;
 
-    final c1x = -offset;
-    final c1y = size.height * 0.25;
+    if (state == PathState.closing) {
+      start = (size.width / 2) - offset;
+      dx = offset;
+    }
 
-    final bx = -offset;
-    final by = size.height;
+    canvas.translate(0, top ? -h / 2 : 0);
+
+    path.moveTo(start, 0);
+
+    final c0x = start;
+    final c0y = h * 0.75;
+
+    final c1x = start + dx;
+    final c1y = h * 0.25;
+
+    final bx = start + dx;
+    final by = h;
 
     path.cubicTo(c0x, c0y, c1x, c1y, bx, by);
 
