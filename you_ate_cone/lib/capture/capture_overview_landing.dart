@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:youatecone/capture/capture.dart';
 import 'package:youatecone/capture/capture_list.dart';
 import 'package:youatecone/capture/capture_overview_landing_view_model.dart';
 
@@ -32,7 +33,10 @@ class _CaptureOverviewLandingState extends State<CaptureOverviewLanding> {
     if (_model.loading) return _buildLoadingIndicator();
 
     return Container(
-      child: CaptureList(listItems: _model.itemDescriptions),
+      child: CaptureList(
+        listItems: _model.itemDescriptions,
+        onCaptureSelected: (capture) => _onCaptureSelected(context, capture),
+      ),
     );
   }
 
@@ -40,5 +44,9 @@ class _CaptureOverviewLandingState extends State<CaptureOverviewLanding> {
     return Container(
       child: Center(child: CircularProgressIndicator()),
     );
+  }
+
+  void _onCaptureSelected(BuildContext context, Capture capture) {
+    print('_onCaptureSelected:$capture');
   }
 }

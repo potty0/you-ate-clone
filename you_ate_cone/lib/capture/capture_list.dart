@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:youatecone/capture/capture.dart';
 import 'package:youatecone/capture/capture_overview_landing_view_model.dart';
 
 import 'package:youatecone/you_ate_theme.dart';
@@ -11,8 +12,9 @@ const double _OffTrackOffset = 30;
 
 class CaptureList extends StatelessWidget {
   final List<CaptureItemDesc> listItems;
-  
-  const CaptureList({Key key, this.listItems}) : super(key: key);
+  final ValueChanged<Capture> onCaptureSelected;
+
+  const CaptureList({Key key, this.listItems, this.onCaptureSelected}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -37,11 +39,14 @@ class CaptureList extends StatelessWidget {
   }
 
   Widget _buildCaptureItem(NeighbourAwareCaptureItem item) {
-    return CaptureItem(
-      imageUrl: item.capture.imagePath,
-      offTrack: item.capture.offTrack,
-      previousOffTrack: item.prevOffTrack,
-      nextOffTrack: item.nextOffTrack,
+    return GestureDetector(
+      onTap: () => onCaptureSelected(item.capture),
+      child: CaptureItem(
+        imageUrl: item.capture.imagePath,
+        offTrack: item.capture.offTrack,
+        previousOffTrack: item.prevOffTrack,
+        nextOffTrack: item.nextOffTrack,
+      ),
     );
   }
 
