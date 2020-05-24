@@ -163,8 +163,6 @@ class CaptureItem extends StatelessWidget {
   }
 }
 
-enum PathState { opening, closing, kept }
-
 class _OffRouteCurvedPathPainter extends CustomPainter {
   final bool top;
   final double offset;

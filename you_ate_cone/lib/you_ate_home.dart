@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:youatecone/capture_overview_landing.dart';
+import 'package:youatecone/capture/capture_overview_landing.dart';
 
 class YouAteHome extends StatefulWidget {
   @override
