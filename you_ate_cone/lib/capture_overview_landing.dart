@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:youatecone/you_ate_theme.dart';
 
 const _CaptureImageSize = Size(125, 125);
 const double _PathHeight = 32;
@@ -15,7 +16,7 @@ class CaptureOverviewLanding extends StatelessWidget {
     final itemCount = items.length;
 
     return Container(
-      child: ListView.separated(
+      child: ListView.builder(
         itemBuilder: (context, index) {
           final offTrack = items[index];
 
@@ -28,7 +29,6 @@ class CaptureOverviewLanding extends StatelessWidget {
             nextOffTrack: nextOffTrack,
           );
         },
-        separatorBuilder: (context, index) => Divider(thickness: 0, height: 0),
         itemCount: itemCount,
       ),
     );
@@ -119,7 +119,7 @@ class CaptureItem extends StatelessWidget {
   }
 
   Widget _buildStraightTrack({bool offTrack}) {
-    final color = offTrack ? Colors.red : Colors.grey[300];
+    final color = offTrack ? ColorPalette.sandyBrown : ColorPalette.mercury;
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
       Padding(
         padding: EdgeInsets.only(right: offTrack ? _OffTrackOffset * 2 : 0),
@@ -141,7 +141,7 @@ class CaptureItem extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               color: Colors.grey,
-              boxShadow: [BoxShadow(blurRadius: 20, spreadRadius: 1, color: Colors.black45)],
+              boxShadow: [BoxShadow(blurRadius: 16, color: Colors.black38)],
             ),
           ),
         ),
@@ -170,7 +170,16 @@ class _OffRouteCurvedPathPainter extends CustomPainter {
   final double offset;
   final bool opening;
 
-  _OffRouteCurvedPathPainter({@required this.top, @required this.opening, this.offset = _OffTrackOffset});
+  final Color startColor;
+  final Color endColor;
+
+  _OffRouteCurvedPathPainter({
+    this.startColor = ColorPalette.bananaMania,
+    this.endColor = ColorPalette.sandyBrown,
+    @required this.top,
+    @required this.opening,
+    this.offset = _OffTrackOffset,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -203,8 +212,8 @@ class _OffRouteCurvedPathPainter extends CustomPainter {
 
     path.cubicTo(c0x, c0y, c1x, c1y, bx, by);
 
-    final a = opening ? Colors.yellow : Colors.red;
-    final b = opening ? Colors.red : Colors.yellow;
+    final a = opening ? startColor : endColor;
+    final b = opening ? endColor : startColor;
 
     final gradient = LinearGradient(
       colors: [a, b],
