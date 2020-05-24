@@ -3,12 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:youatecone/capture/capture_overview_landing.dart';
 
 class YouAteHome extends StatefulWidget {
+  final int initialTabIndex;
+
+  const YouAteHome({Key key, this.initialTabIndex = 1}) : super(key: key);
+
   @override
   _YouAteHomeState createState() => _YouAteHomeState();
 }
 
 class _YouAteHomeState extends State<YouAteHome> {
   int _selectedTabIndex = 0;
+
+  @override
+  void initState() {
+    _selectedTabIndex = widget.initialTabIndex;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
