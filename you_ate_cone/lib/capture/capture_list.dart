@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:youatecone/capture/capture.dart';
+import 'package:youatecone/capture/capture_overview_landing_view_model.dart';
 
 import 'package:youatecone/you_ate_theme.dart';
 
@@ -10,29 +10,48 @@ const double _PathWidth = 4;
 const double _OffTrackOffset = 30;
 
 class CaptureList extends StatelessWidget {
-  final List<Capture> captures;
-
-  const CaptureList({Key key, this.captures}) : super(key: key);
+  final List<CaptureItemDesc> listItems;
+  
+  const CaptureList({Key key, this.listItems}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final itemCount = captures.length;
+    final itemCount = listItems.length;
 
     return ListView.builder(
       itemBuilder: (context, index) {
-        final capture = captures[index];
+        final item = listItems[index];
+        switch (item.type) {
+          case CaptureItemType.summary:
+            return _buildSummaryItem(item.summary);
 
-        final prevOffTrack = index == 0 ? null : captures[index - 1].offTrack;
-        final nextOffTrack = index == itemCount - 1 ? null : captures[index + 1].offTrack;
+          case CaptureItemType.capture:
+            return _buildCaptureItem(item.capture);
 
-        return CaptureItem(
-          imageUrl: capture.imagePath,
-          offTrack: capture.offTrack,
-          previousOffTrack: prevOffTrack,
-          nextOffTrack: nextOffTrack,
-        );
+          default:
+            throw ArgumentError('Unsupported item type');
+        }
       },
       itemCount: itemCount,
+    );
+  }
+
+  Widget _buildCaptureItem(NeighbourAwareCaptureItem item) {
+    return CaptureItem(
+      imageUrl: item.capture.imagePath,
+      offTrack: item.capture.offTrack,
+      previousOffTrack: item.prevOffTrack,
+      nextOffTrack: item.nextOffTrack,
+    );
+  }
+
+  Widget _buildSummaryItem(CaptureDaySummary summary) {
+    return Container(
+      color: ColorPalette.mercury,
+      height: 80,
+      child: Center(
+        child: Text(summary.day.toString()),
+      ),
     );
   }
 }
