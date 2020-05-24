@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -8,7 +10,7 @@ const double _PathWidth = 4;
 class CaptureOverviewLanding extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final itemCount = 30;
+    final itemCount = 3;
 
     return Container(
       child: ListView.separated(
@@ -62,41 +64,37 @@ class CaptureItem extends StatelessWidget {
   Widget buildCapture() {
     return Stack(fit: StackFit.expand, children: [
       _buildStraightTrackPath(),
-      Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        _buildTopCurve(),
-        _buildBottomCurve(),
-      ]),
+      Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _buildTopPathSegment(),
+          _buildBottomPathSegment(),
+        ],
+      ),
       _buildImage(),
     ]);
   }
 
-  Widget _buildTopCurve() {
+  Widget _buildTopPathSegment() {
     if (previousOffTrack == null) return Container();
 
-    PathState state = PathState.kept;
-    if (previousOffTrack != null && previousOffTrack != offTrack) {
-      state = offTrack ? PathState.opening : PathState.closing;
-    }
+    bool opening = (previousOffTrack != offTrack && !previousOffTrack);
 
-    return Container(
+    return SizedBox(
       height: _PathHeight / 2,
-      color: Colors.yellow,
-      child: CustomPaint(painter: _OffRoutePathPainter(top: true, state: state)),
+      child: CustomPaint(painter: _OffRouteCurvedPathPainter(top: true, opening: opening)),
     );
   }
 
-  Widget _buildBottomCurve() {
+  Widget _buildBottomPathSegment() {
     if (nextOffTrack == null) return Container();
 
-    PathState state = PathState.kept;
-    if (nextOffTrack != null && nextOffTrack != offTrack) {
-      state = offTrack ? PathState.closing : PathState.opening;
-    }
+    bool opening = (nextOffTrack != offTrack && nextOffTrack);
 
-    return Container(
+    return SizedBox(
       height: _PathHeight / 2,
-      color: Colors.yellow,
-      child: CustomPaint(painter: _OffRoutePathPainter(top: false, state: state)),
+      child: CustomPaint(painter: _OffRouteCurvedPathPainter(top: false, opening: opening)),
     );
   }
 
@@ -144,19 +142,16 @@ class CaptureItem extends StatelessWidget {
 
 enum PathState { opening, closing, kept }
 
-class _OffRoutePathPainter extends CustomPainter {
+class _OffRouteCurvedPathPainter extends CustomPainter {
   final bool top;
   final double offset;
-  final PathState state;
+  final bool opening;
 
-  _OffRoutePathPainter({this.top = true, this.state = PathState.kept, this.offset = 30});
+  _OffRouteCurvedPathPainter({@required this.top, @required this.opening, this.offset = 30});
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = top ? Colors.blue : Colors.green
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = _PathWidth;
+    canvas.clipRect(Offset.zero & size);
 
     Path path = Path();
 
@@ -165,7 +160,7 @@ class _OffRoutePathPainter extends CustomPainter {
 
     const double h = _PathHeight;
 
-    if (state == PathState.closing) {
+    if (!opening) {
       start = (size.width / 2) - offset;
       dx = offset;
     }
@@ -185,9 +180,35 @@ class _OffRoutePathPainter extends CustomPainter {
 
     path.cubicTo(c0x, c0y, c1x, c1y, bx, by);
 
+    Color a;
+    Color b;
+
+    if (top) {
+      a = opening ? Colors.yellow : Colors.red;
+      b = opening ? Colors.red : Colors.yellow;
+    } else {
+      a = opening ? Colors.yellow : Colors.red;
+      b = opening ? Colors.red : Colors.yellow;
+    }
+
+    final gradient = LinearGradient(
+      colors: [a, b],
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      tileMode: TileMode.repeated,
+    );
+
+    final shader = gradient.createShader(Offset(start + dx, 0) & Size(0, _PathHeight));
+
+    final paint = Paint()
+      ..color = top ? Colors.blue : Colors.green
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = _PathWidth
+      ..shader = shader;
+
     canvas.drawPath(path, paint);
   }
 
   @override
-  bool shouldRepaint(_OffRoutePathPainter oldDelegate) => oldDelegate.top != top;
+  bool shouldRepaint(_OffRouteCurvedPathPainter oldDelegate) => oldDelegate.top != top;
 }
