@@ -1,47 +1,47 @@
 {
   "captures": [
     {
-      "image_url": "https://www.dropbox.com/s/3fu9z10d5jlpnfo/breakfast_0.jpg?dl=0",
+      "image_url": "https://dl.dropbox.com/s/3fu9z10d5jlpnfo/breakfast_0.jpg",
       "timestamp": 1590302303,
       "off_track": false
     },
     {
-      "image_url": "https://www.dropbox.com/s/8pvptwxh3nc8twg/lunch_0.jpg?dl=0",
+      "image_url": "https://dl.dropbox.com/s/8pvptwxh3nc8twg/lunch_0.jpg",
       "timestamp": 1590318203,
       "off_track": true
     },
     {
-      "image_url": "https://www.dropbox.com/s/ypf751ap0nancnq/dinner_0.jpg?dl=0",
+      "image_url": "https://dl.dropbox.com/s/ypf751ap0nancnq/dinner_0.jpg",
       "timestamp": 1590332423,
-      "off_track": false
+      "off_track": true
     },
     {
-      "image_url": "https://www.dropbox.com/s/y5d0ba486fpbobv/breakfast_1.jpg?dl=0",
+      "image_url": "https://dl.dropbox.com/s/y5d0ba486fpbobv/breakfast_1.jpg",
       "timestamp": 1590213623,
-      "off_track": false
+      "off_track": true
     },
     {
-      "image_url": "https://www.dropbox.com/s/tgfayqrksmjaw5x/lunch_1.jpg?dl=0",
+      "image_url": "https://dl.dropbox.com/s/tgfayqrksmjaw5x/lunch_1.jpg",
       "timestamp": 1590235223,
       "off_track": false
     },
     {
-      "image_url": "https://www.dropbox.com/s/1kkp5wesbqwcamb/dinner_1.jpg?dl=0",
+      "image_url": "https://dl.dropbox.com/s/1kkp5wesbqwcamb/dinner_1.jpg",
       "timestamp": 1590257723,
       "off_track": false
     },
     {
-      "image_url": "https://www.dropbox.com/s/37vuhjrdolkj816/breakfast_2.jpg?dl=0",
+      "image_url": "https://dl.dropbox.com/s/37vuhjrdolkj816/breakfast_2.jpg",
       "timestamp": 1590130823,
       "off_track": false
     },
     {
-      "image_url": "https://www.dropbox.com/s/q0vhjn9cf81bb6u/lunch_2.jpg?dl=0",
+      "image_url": "https://dl.dropbox.com/s/q0vhjn9cf81bb6u/lunch_2.jpg",
       "timestamp": 1590148823,
       "off_track": false
     },
     {
-      "image_url": "https://www.dropbox.com/s/a2vaqxrzsb2k347/dinner_2.jpg?dl=0",
+      "image_url": "https://dl.dropbox.com/s/a2vaqxrzsb2k347/dinner_2.jpg",
       "timestamp": 1590174623,
       "off_track": false
     }

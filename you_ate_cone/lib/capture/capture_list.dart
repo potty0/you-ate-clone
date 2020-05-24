@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:youatecone/capture/capture.dart';
 
@@ -19,13 +20,14 @@ class CaptureList extends StatelessWidget {
 
     return ListView.builder(
       itemBuilder: (context, index) {
-        final offTrack = captures[index].offTrack;
+        final capture = captures[index];
 
         final prevOffTrack = index == 0 ? null : captures[index - 1].offTrack;
         final nextOffTrack = index == itemCount - 1 ? null : captures[index + 1].offTrack;
 
         return CaptureItem(
-          offTrack: offTrack,
+          imageUrl: capture.imagePath,
+          offTrack: capture.offTrack,
           previousOffTrack: prevOffTrack,
           nextOffTrack: nextOffTrack,
         );
@@ -36,12 +38,15 @@ class CaptureList extends StatelessWidget {
 }
 
 class CaptureItem extends StatelessWidget {
+  final String imageUrl;
   final bool offTrack;
+
   final bool previousOffTrack;
   final bool nextOffTrack;
 
   const CaptureItem({
     Key key,
+    this.imageUrl,
     this.offTrack = false,
     this.previousOffTrack = false,
     this.nextOffTrack,
@@ -142,6 +147,10 @@ class CaptureItem extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
               color: Colors.grey,
               boxShadow: [BoxShadow(blurRadius: 16, color: Colors.black38)],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: CachedNetworkImage(imageUrl: imageUrl, fit: BoxFit.cover),
             ),
           ),
         ),

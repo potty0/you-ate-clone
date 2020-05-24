@@ -8,7 +8,7 @@ part of 'capture.dart';
 
 Capture _$CaptureFromJson(Map<String, dynamic> json) {
   return Capture(
-    json['image_path'] as String,
+    json['image_url'] as String,
     parseEpochTimestamp(json['timestamp'] as int),
     json['off_track'] as bool,
   );

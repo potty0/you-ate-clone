@@ -4,6 +4,7 @@ part 'capture.g.dart';
 
 @JsonSerializable(nullable: false, fieldRename: FieldRename.snake, createToJson: false)
 class Capture {
+  @JsonKey(name: 'image_url')
   final String imagePath;
 
   @JsonKey(fromJson: parseEpochTimestamp)
@@ -11,14 +12,12 @@ class Capture {
 
   final bool offTrack;
 
-  Uri get imageUri => Uri.parse(imagePath);
-
   Capture(this.imagePath, this.timestamp, this.offTrack);
 
   factory Capture.fromJson(Map<String, dynamic> json) => _$CaptureFromJson(json);
 
   @override
-  String toString() => 'timestamp:$timestamp, off track:$offTrack';
+  String toString() => 'image url:$imagePath, timestamp:$timestamp, off track:$offTrack';
 }
 
 @JsonSerializable(nullable: false, createToJson: false)
