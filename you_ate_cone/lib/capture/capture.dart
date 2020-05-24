@@ -4,21 +4,31 @@ part 'capture.g.dart';
 
 @JsonSerializable(nullable: false, fieldRename: FieldRename.snake, createToJson: false)
 class Capture {
-  final Uri imageUri;
+  final String imagePath;
+
+  @JsonKey(fromJson: parseEpochTimestamp)
   final DateTime timestamp;
+
   final bool offTrack;
 
-  Capture(this.imageUri, this.timestamp, this.offTrack);
+  Uri get imageUri => Uri.parse(imagePath);
+
+  Capture(this.imagePath, this.timestamp, this.offTrack);
 
   factory Capture.fromJson(Map<String, dynamic> json) => _$CaptureFromJson(json);
+
+  @override
+  String toString() => 'timestamp:$timestamp, off track:$offTrack';
 }
 
 @JsonSerializable(nullable: false, createToJson: false)
-class CaptureList {
+class CaptureHistory {
   @JsonKey(name: 'captures')
-  List<Capture> history;
+  List<Capture> items;
 
-  CaptureList(this.history);
+  CaptureHistory(this.items);
 
-  factory CaptureList.fromJson(Map<String, dynamic> json) => _$CaptureListFromJson(json);
+  factory CaptureHistory.fromJson(Map<String, dynamic> json) => _$CaptureHistoryFromJson(json);
 }
+
+DateTime parseEpochTimestamp(int timestamp) => DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);

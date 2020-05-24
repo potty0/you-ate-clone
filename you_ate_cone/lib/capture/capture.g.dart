@@ -8,14 +8,14 @@ part of 'capture.dart';
 
 Capture _$CaptureFromJson(Map<String, dynamic> json) {
   return Capture(
-    Uri.parse(json['image_uri'] as String),
-    DateTime.parse(json['timestamp'] as String),
+    json['image_path'] as String,
+    parseEpochTimestamp(json['timestamp'] as int),
     json['off_track'] as bool,
   );
 }
 
-CaptureList _$CaptureListFromJson(Map<String, dynamic> json) {
-  return CaptureList(
+CaptureHistory _$CaptureHistoryFromJson(Map<String, dynamic> json) {
+  return CaptureHistory(
     (json['captures'] as List)
         .map((e) => Capture.fromJson(e as Map<String, dynamic>))
         .toList(),
