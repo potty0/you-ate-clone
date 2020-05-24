@@ -6,19 +6,21 @@ import 'package:flutter/material.dart';
 const _CaptureImageSize = Size(125, 125);
 const double _PathHeight = 32;
 const double _PathWidth = 4;
+const double _OffTrackOffset = 30;
 
 class CaptureOverviewLanding extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final itemCount = 3;
+    final items = [false, true, true, false, false, true, true, false, false];
+    final itemCount = items.length;
 
     return Container(
       child: ListView.separated(
         itemBuilder: (context, index) {
-          final offTrack = index % 2 != 0;
+          final offTrack = items[index];
 
-          final prevOffTrack = index == 0 ? null : !offTrack;
-          final nextOffTrack = index == itemCount - 1 ? null : !offTrack;
+          final prevOffTrack = index == 0 ? null : items[index - 1];
+          final nextOffTrack = index == itemCount - 1 ? null : items[index + 1];
 
           return CaptureItem(
             offTrack: offTrack,
@@ -63,7 +65,7 @@ class CaptureItem extends StatelessWidget {
 
   Widget buildCapture() {
     return Stack(fit: StackFit.expand, children: [
-      _buildStraightTrackPath(),
+      _buildStraightTrack(offTrack: false),
       Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -79,34 +81,55 @@ class CaptureItem extends StatelessWidget {
   Widget _buildTopPathSegment() {
     if (previousOffTrack == null) return Container();
 
-    bool opening = (previousOffTrack != offTrack && !previousOffTrack);
+    if (previousOffTrack == offTrack && !offTrack) return Container();
+
+    Widget pathComponent;
+
+    if (previousOffTrack == offTrack && offTrack) {
+      pathComponent = _buildStraightTrack(offTrack: true);
+    } else {
+      bool opening = (previousOffTrack != offTrack && !previousOffTrack);
+      pathComponent = CustomPaint(painter: _OffRouteCurvedPathPainter(top: true, opening: opening));
+    }
 
     return SizedBox(
       height: _PathHeight / 2,
-      child: CustomPaint(painter: _OffRouteCurvedPathPainter(top: true, opening: opening)),
+      child: pathComponent,
     );
   }
 
   Widget _buildBottomPathSegment() {
     if (nextOffTrack == null) return Container();
 
-    bool opening = (nextOffTrack != offTrack && nextOffTrack);
+    if (nextOffTrack == offTrack && !offTrack) return Container();
+
+    Widget pathComponent;
+
+    if (nextOffTrack == offTrack && offTrack) {
+      pathComponent = _buildStraightTrack(offTrack: true);
+    } else {
+      bool opening = (nextOffTrack != offTrack && nextOffTrack);
+      pathComponent = CustomPaint(painter: _OffRouteCurvedPathPainter(top: false, opening: opening));
+    }
 
     return SizedBox(
       height: _PathHeight / 2,
-      child: CustomPaint(painter: _OffRouteCurvedPathPainter(top: false, opening: opening)),
+      child: pathComponent,
     );
   }
 
-  Widget _buildStraightTrackPath() {
+  Widget _buildStraightTrack({bool offTrack}) {
+    final color = offTrack ? Colors.red : Colors.grey[300];
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-      Container(width: _PathWidth, color: Colors.grey[300]),
+      Padding(
+        padding: EdgeInsets.only(right: offTrack ? _OffTrackOffset * 2 : 0),
+        child: Container(width: _PathWidth, color: color),
+      ),
     ]);
   }
 
   Widget _buildImage() {
-    const double offTrackOffset = 30;
-    final double padding = offTrack ? offTrackOffset * 2 : 0;
+    final double padding = offTrack ? _OffTrackOffset * 2 : 0;
 
     return Container(
       child: Center(
@@ -147,7 +170,7 @@ class _OffRouteCurvedPathPainter extends CustomPainter {
   final double offset;
   final bool opening;
 
-  _OffRouteCurvedPathPainter({@required this.top, @required this.opening, this.offset = 30});
+  _OffRouteCurvedPathPainter({@required this.top, @required this.opening, this.offset = _OffTrackOffset});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -180,16 +203,8 @@ class _OffRouteCurvedPathPainter extends CustomPainter {
 
     path.cubicTo(c0x, c0y, c1x, c1y, bx, by);
 
-    Color a;
-    Color b;
-
-    if (top) {
-      a = opening ? Colors.yellow : Colors.red;
-      b = opening ? Colors.red : Colors.yellow;
-    } else {
-      a = opening ? Colors.yellow : Colors.red;
-      b = opening ? Colors.red : Colors.yellow;
-    }
+    final a = opening ? Colors.yellow : Colors.red;
+    final b = opening ? Colors.red : Colors.yellow;
 
     final gradient = LinearGradient(
       colors: [a, b],
@@ -198,10 +213,9 @@ class _OffRouteCurvedPathPainter extends CustomPainter {
       tileMode: TileMode.repeated,
     );
 
-    final shader = gradient.createShader(Offset(start + dx, 0) & Size(0, _PathHeight));
+    final shader = gradient.createShader(Offset.zero & Size(0, _PathHeight));
 
     final paint = Paint()
-      ..color = top ? Colors.blue : Colors.green
       ..style = PaintingStyle.stroke
       ..strokeWidth = _PathWidth
       ..shader = shader;
