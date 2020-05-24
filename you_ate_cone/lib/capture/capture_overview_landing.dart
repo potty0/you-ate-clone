@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:youatecone/capture/capture.dart';
+import 'package:youatecone/capture/capture_detials.dart';
 import 'package:youatecone/capture/capture_list.dart';
 import 'package:youatecone/capture/capture_overview_landing_view_model.dart';
 
@@ -47,6 +48,7 @@ class _CaptureOverviewLandingState extends State<CaptureOverviewLanding> {
   }
 
   void _onCaptureSelected(BuildContext context, Capture capture) {
-    print('_onCaptureSelected:$capture');
+    final route = MaterialPageRoute(builder: (context) => CaptureDetails(), fullscreenDialog: true);
+    Navigator.of(context).push(route);
   }
 }
