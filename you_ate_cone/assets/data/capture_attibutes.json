@@ -1,0 +1,82 @@
+{
+  "sections": [
+    {
+      "question": "Why did you eat?",
+      "options": [
+        "Hungry",
+        "Social",
+        "It was time",
+        "Bored",
+        "Stressed",
+        "Cravings",
+        "Tired",
+        "❤️ the taste",
+        "Why not?",
+        "Other"
+      ]
+    },
+    {
+      "question": "Who did you eat with?",
+      "options": [
+        "Friends",
+        "Family",
+        "Partner",
+        "Colleagues",
+        "By myself"
+      ]
+    },
+    {
+      "question": "Who did you eat with?",
+      "options": [
+        "Friends",
+        "Family",
+        "Partner",
+        "Colleagues",
+        "By myself"
+      ]
+    },
+    {
+      "question": "How was it?",
+      "options": [
+        "Forgettable",
+        "Good",
+        "Awsome"
+      ]
+    },
+    {
+      "question": "Where did you eat?",
+      "options": [
+        "Table",
+        "TV",
+        "Car",
+        "Bed",
+        "Work Desk",
+        "Standing",
+        "Counch"
+      ]
+    },
+    {
+      "question": "How was it made?",
+      "options": [
+        "Homemade",
+        "Restaurant",
+        "Fast food",
+        "Bakery",
+        "Prepackaged",
+        "Raw"
+      ]
+    },
+    {
+      "question": "How did it make you feel?",
+      "options": [
+        "Satisfied",
+        "Still hungry",
+        "Stuffed",
+        "Happy",
+        "Guilty",
+        "Unsatisfied",
+        "Sick"
+      ]
+    }
+  ]
+}
