@@ -1,7 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class CaptureDetails extends StatelessWidget {
+class CaptureDetailsViewModel {}
+
+class CaptureDetails extends StatefulWidget {
+  @override
+  _CaptureDetailsState createState() => _CaptureDetailsState();
+}
+
+class _CaptureDetailsState extends State<CaptureDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,7 +24,7 @@ class CaptureDetails extends StatelessWidget {
         child: Center(
           child: RaisedButton(
             child: Text('Back'),
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => Navigator.of(context).pop(5),
           ),
         ),
       ),

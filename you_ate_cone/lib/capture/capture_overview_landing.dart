@@ -47,8 +47,7 @@ class _CaptureOverviewLandingState extends State<CaptureOverviewLanding> {
     );
   }
 
-  void _onCaptureSelected(BuildContext context, Capture capture) {
+  Future<void> _onCaptureSelected(BuildContext context, Capture capture) async {
     final route = MaterialPageRoute(builder: (context) => CaptureDetails(), fullscreenDialog: true);
-    Navigator.of(context).push(route);
   }
 }
