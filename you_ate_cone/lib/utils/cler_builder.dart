@@ -33,7 +33,7 @@ class CLERBuilder<T extends CLERModel> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (model.hasError) {
-      final builder = errorBuilder ?? (context, m) => CoveringLoadingIndicator();
+      final builder = errorBuilder ?? (context, m) => CoveringErrorIndicator.fromModel(model);
       return builder(context, model);
     }
 
@@ -73,13 +73,21 @@ class CoveringErrorIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-      Text('Ooops', style: theme.textTheme.caption),
-      if (loading) Text('Loading...'),
-      MaterialButton(
-        onPressed: loading ? null : onRetrySelected,
-        child: Text('Retry'),
-      )
-    ]);
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text('Ooops', style: theme.textTheme.headline3, textAlign: TextAlign.center),
+        Text(error, style: theme.textTheme.bodyText1, textAlign: TextAlign.center),
+        SizedBox(height: 20),
+        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          MaterialButton(
+            color: Colors.blue,
+            onPressed: loading ? null : onRetrySelected,
+            child: Text(loading ? 'Loading' : 'Retry'),
+          ),
+        ])
+      ],
+    );
   }
 }

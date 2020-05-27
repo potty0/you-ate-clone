@@ -5,6 +5,7 @@ import 'package:youatecone/capture/capture_detials.dart';
 import 'package:youatecone/capture/capture_list.dart';
 import 'package:youatecone/capture/capture_overview_landing_view_model.dart';
 import 'package:youatecone/main.dart';
+import 'package:youatecone/utils/cler_builder.dart';
 
 class CaptureOverviewLanding extends StatefulWidget {
   @override
@@ -16,7 +17,7 @@ class _CaptureOverviewLandingState extends State<CaptureOverviewLanding> {
 
   @override
   void initState() {
-    _model.addListener(_updateContents);
+    _model.addListener(_onModelUpdated);
     _model.updateContents();
 
     super.initState();
@@ -24,27 +25,22 @@ class _CaptureOverviewLandingState extends State<CaptureOverviewLanding> {
 
   @override
   void dispose() {
-    _model.removeListener(_updateContents);
+    _model.removeListener(_onModelUpdated);
     super.dispose();
   }
 
-  void _updateContents() => setState(() {});
+  void _onModelUpdated() => setState(() {});
 
   @override
   Widget build(BuildContext context) {
-    if (_model.loading) return _buildLoadingIndicator();
-
-    return Container(
-      child: CaptureList(
-        listItems: _model.itemDescriptions,
-        onCaptureSelected: (capture) => _onCaptureSelected(context, capture),
-      ),
-    );
-  }
-
-  Widget _buildLoadingIndicator() {
-    return Container(
-      child: Center(child: CircularProgressIndicator()),
+    return CLERBuilder(
+      model: _model,
+      contentBuilder: (context, model) {
+        return CaptureList(
+          listItems: _model.itemDescriptions,
+          onCaptureSelected: (capture) => _onCaptureSelected(context, capture),
+        );
+      },
     );
   }
 
