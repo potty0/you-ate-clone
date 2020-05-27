@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:youatecone/capture/capture_attributes.dart';
 import 'package:youatecone/capture/capture_detials_view_model.dart';
 import 'package:youatecone/main.dart';
@@ -14,8 +17,8 @@ class _CaptureDetailsState extends State<CaptureDetails> {
 
   @override
   void initState() {
-    _model.addListener(_onModelUpdated);
     _model.updateContents();
+    _model.addListener(_onModelUpdated);
 
     super.initState();
   }
@@ -46,9 +49,6 @@ class _CaptureDetailsState extends State<CaptureDetails> {
   Widget _buildContents(BuildContext context) {
     if (_model.loading) _buildLoadingIndicator();
 
-    final listOfOptions = _model.options.map((s) => s.answers);
-    final allOptions = listOfOptions.expand((q) => q).toList();
-
     return ListView.builder(
       shrinkWrap: true,
       primary: false,
@@ -65,16 +65,29 @@ class _CaptureDetailsState extends State<CaptureDetails> {
   }
 }
 
-class CaptureAttributeSelector extends StatelessWidget {
+class CaptureAttributeSelector extends StatefulWidget {
   final CaptureAttributeOption option;
 
   const CaptureAttributeSelector({Key key, this.option}) : super(key: key);
 
   @override
+  _CaptureAttributeSelectorState createState() => _CaptureAttributeSelectorState();
+}
+
+class _CaptureAttributeSelectorState extends State<CaptureAttributeSelector> with SingleTickerProviderStateMixin {
+  AnimationController _animationController;
+
+  @override
+  void initState() {
+    _animationController = AnimationController(vsync: this);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final answers = option.answers.map((a) => _buildAnswer(a)).toList();
+    final answers = widget.option.answers.map((a) => _buildAnswer(a)).toList();
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-      Text(option.question),
+      Text(widget.option.question),
       SizedBox(height: 8),
       Container(
         color: Colors.blue,
@@ -85,15 +98,45 @@ class CaptureAttributeSelector extends StatelessWidget {
   }
 
   Widget _buildAnswer(String answer) {
-    return Chip(label: Text(answer));
+    return AnimatedSelection(child: Chip(label: Text(answer)));
+  }
+}
 
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        color: Colors.green,
-      ),
-      child: Text(answer),
+class AnimatedSelection extends StatefulWidget {
+  final Widget child;
+
+  const AnimatedSelection({Key key, this.child}) : super(key: key);
+
+  @override
+  _AnimatedSelectionState createState() => _AnimatedSelectionState();
+}
+
+class _AnimatedSelectionState extends State<AnimatedSelection> with SingleTickerProviderStateMixin {
+  AnimationController _animationController;
+
+  @override
+  void initState() {
+    _animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 100))
+      ..addListener(() => setState(() {}));
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final Animation curve = CurvedAnimation(parent: _animationController, curve: Curves.elasticInOut);
+    final animation = Tween<double>(begin: 1.0, end: 1.25).animate(curve);
+
+    return GestureDetector(
+      onTapDown: (_) => _animationController.forward(),
+      onTapUp: (_) => _animationController.reverse(),
+      onTapCancel: () => _animationController.reverse(),
+      child: Transform.scale(scale: animation.value, child: widget.child),
     );
   }
 }

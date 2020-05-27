@@ -7,7 +7,7 @@ class CaptureDetailsViewModel extends ChangeNotifier {
 
   bool get loading => _loading;
 
-  List<CaptureAttributeOption> get options => _options;
+  List<CaptureAttributeOption> get options => _options ?? [];
 
   List<CaptureAttributeOption> _options;
   bool _loading = false;
