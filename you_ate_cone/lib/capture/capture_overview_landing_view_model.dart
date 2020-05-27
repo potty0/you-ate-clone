@@ -63,7 +63,7 @@ class CaptureOverviewLandingViewModel extends ChangeNotifier {
   bool _loading = false;
 
   Future<void> updateContents() async {
-    if (_captures != null) return;
+    if (_captures != null || _loading) return;
     _setLoadingAndNotify(true);
 
     _captures = await api.getCaptures();
