@@ -5,6 +5,7 @@ import 'package:youatecone/capture/capture_detials.dart';
 import 'package:youatecone/capture/capture_list.dart';
 import 'package:youatecone/capture/capture_overview_landing_view_model.dart';
 import 'package:youatecone/main.dart';
+import 'package:youatecone/services/login_assistant.dart';
 import 'package:youatecone/utils/cler_builder.dart';
 
 class CaptureOverviewLanding extends StatefulWidget {
@@ -45,7 +46,28 @@ class _CaptureOverviewLandingState extends State<CaptureOverviewLanding> {
   }
 
   Future<void> _onCaptureSelected(BuildContext context, Capture capture) async {
-    final route = MaterialPageRoute(builder: (context) => CaptureDetails(), fullscreenDialog: true);
-    Navigator.of(context).push(route);
+    final assistant = LoginService.of(context);
+
+    if (assistant.loggedIn || true) {
+      final dialog = CupertinoAlertDialog(
+        title: Text('Some title'),
+        content: Text('Some text indicating the content'),
+        actions: [
+          CupertinoDialogAction(
+            child: Text('Ok'),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          CupertinoDialogAction(
+            child: Text('Cancel'),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ],
+      );
+
+      showCupertinoDialog(context: context, builder: (context) => dialog);
+    } else {
+      final route = MaterialPageRoute(builder: (context) => CaptureDetails(), fullscreenDialog: true);
+      Navigator.of(context).push(route);
+    }
   }
 }

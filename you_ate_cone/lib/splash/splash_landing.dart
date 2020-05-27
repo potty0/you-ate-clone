@@ -1,15 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:youatecone/main.dart';
 import 'package:youatecone/services/login_assistant.dart';
 
 class SplashLanding extends StatefulWidget {
   final Function loggedInRouteBuilder;
   final Function loggedOutRouteBuilder;
 
-  final LoginAssistant loginAssistant;
-
-  const SplashLanding({Key key, this.loggedInRouteBuilder, this.loggedOutRouteBuilder, this.loginAssistant})
-      : super(key: key);
+  const SplashLanding({Key key, this.loggedInRouteBuilder, this.loggedOutRouteBuilder}) : super(key: key);
 
   @override
   _SplashLandingState createState() => _SplashLandingState();
@@ -35,7 +33,9 @@ class _SplashLandingState extends State<SplashLanding> {
   }
 
   Future<void> _checkLoggedInState() async {
-    final loggedIn = await widget.loginAssistant.autoLogin();
+    final assistant = LoginService.of(context);
+
+    final loggedIn = await assistant.autoLogin();
     final route = loggedIn ? widget.loggedInRouteBuilder(context) : widget.loggedOutRouteBuilder(context);
     Navigator.of(context).push(route);
   }
