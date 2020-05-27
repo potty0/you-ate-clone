@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:youatecone/capture/capture.dart';
+import 'package:youatecone/services/you_ate_api.dart';
 
 class CaptureDaySummary {
   final List<Capture> captures;
@@ -46,6 +47,10 @@ class CaptureItemDesc {
 }
 
 class CaptureOverviewLandingViewModel extends ChangeNotifier {
+  final YouAteApi api;
+
+  CaptureOverviewLandingViewModel({this.api});
+
   bool get loading => _loading;
 
   List<Capture> get captures => _captures;
@@ -61,19 +66,13 @@ class CaptureOverviewLandingViewModel extends ChangeNotifier {
     if (_captures != null) return;
     _setLoadingAndNotify(true);
 
-    _captures = await _loadModelData();
+    _captures = await api.getCaptures();
     final summaries = _calculateDaySummaries(_captures);
     _itemDescriptions = _buildCaptureItemList(summaries);
 
     await Future.delayed(Duration(seconds: 2));
 
     _setLoadingAndNotify(false);
-  }
-
-  Future<List<Capture>> _loadModelData() async {
-    String jsonString = await rootBundle.loadString('assets/data/basic_captures.json');
-    final jsonContent = json.decode(jsonString);
-    return CaptureHistory.fromJson(jsonContent).items;
   }
 
   List<CaptureDaySummary> _calculateDaySummaries(List<Capture> captures) {
