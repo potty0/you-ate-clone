@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:youatecone/capture/capture.dart';
 import 'package:youatecone/services/you_ate_api.dart';
+import 'package:youatecone/utils/cler_builder.dart';
 
 class CaptureDaySummary {
   final List<Capture> captures;
@@ -46,12 +47,22 @@ class CaptureItemDesc {
   factory CaptureItemDesc.fromSummary(CaptureDaySummary summary) => CaptureItemDesc(CaptureItemType.summary, summary);
 }
 
-class CaptureOverviewLandingViewModel extends ChangeNotifier {
+class CaptureOverviewLandingViewModel extends ChangeNotifier with CLERModel {
   final YouAteApi api;
 
   CaptureOverviewLandingViewModel({this.api});
 
+  @override
   bool get loading => _loading;
+
+  @override
+  String get error => _error;
+
+  @override
+  bool get hasData => _captures?.isEmpty ?? false;
+
+  @override
+  bool get hasError => error != null;
 
   List<Capture> get captures => _captures;
 
@@ -61,18 +72,24 @@ class CaptureOverviewLandingViewModel extends ChangeNotifier {
   List<CaptureItemDesc> _itemDescriptions;
 
   bool _loading = false;
+  String _error;
 
   Future<void> updateContents() async {
     if (_captures != null || _loading) return;
     _setLoadingAndNotify(true);
 
-    _captures = await api.getCaptures();
-    final summaries = _calculateDaySummaries(_captures);
-    _itemDescriptions = _buildCaptureItemList(summaries);
+    try {
+      _captures = await api.getCaptures();
+      final summaries = _calculateDaySummaries(_captures);
 
-    await Future.delayed(Duration(seconds: 2));
-
-    _setLoadingAndNotify(false);
+      _itemDescriptions = _buildCaptureItemList(summaries);
+      _error = null;
+    } catch (_) {
+      _error = 'Failed to get captures...';
+      _itemDescriptions = null;
+    } finally {
+      _setLoadingAndNotify(false);
+    }
   }
 
   List<CaptureDaySummary> _calculateDaySummaries(List<Capture> captures) {
