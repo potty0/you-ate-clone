@@ -4,6 +4,8 @@ import 'package:youatecone/capture/capture.dart';
 import 'package:youatecone/capture/capture_detials.dart';
 import 'package:youatecone/capture/capture_list.dart';
 import 'package:youatecone/capture/capture_overview_landing_view_model.dart';
+import 'package:youatecone/content/cler_content.dart';
+import 'package:youatecone/main.dart';
 
 class CaptureOverviewLanding extends StatefulWidget {
   @override
@@ -11,11 +13,11 @@ class CaptureOverviewLanding extends StatefulWidget {
 }
 
 class _CaptureOverviewLandingState extends State<CaptureOverviewLanding> {
-  CaptureOverviewLandingViewModel _model = CaptureOverviewLandingViewModel();
+  CaptureOverviewLandingViewModel _model = CaptureOverviewLandingViewModel(api: youAteApi);
 
   @override
   void initState() {
-    _model.addListener(_updateContents);
+    _model.addListener(_onModelUpdated);
     _model.updateContents();
 
     super.initState();
@@ -23,19 +25,18 @@ class _CaptureOverviewLandingState extends State<CaptureOverviewLanding> {
 
   @override
   void dispose() {
-    _model.removeListener(_updateContents);
+    _model.removeListener(_onModelUpdated);
     super.dispose();
   }
 
-  void _updateContents() => setState(() {});
+  void _onModelUpdated() => setState(() {});
 
   @override
   Widget build(BuildContext context) {
-    if (_model.loading) return _buildLoadingIndicator();
-
-    return Container(
-      child: CaptureList(
-        listItems: _model.itemDescriptions,
+    return CLERBuilder(
+      model: _model,
+      contentBuilder: (context, model) => CaptureList(
+        listItems: model.itemDescriptions,
         onCaptureSelected: (capture) => _onCaptureSelected(context, capture),
       ),
     );
@@ -49,5 +50,6 @@ class _CaptureOverviewLandingState extends State<CaptureOverviewLanding> {
 
   Future<void> _onCaptureSelected(BuildContext context, Capture capture) async {
     final route = MaterialPageRoute(builder: (context) => CaptureDetails(), fullscreenDialog: true);
+    Navigator.of(context).push(route);
   }
 }

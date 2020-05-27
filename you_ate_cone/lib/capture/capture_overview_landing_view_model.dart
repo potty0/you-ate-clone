@@ -1,8 +1,13 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:youatecone/capture/capture.dart';
+import 'package:youatecone/content/cler_content.dart';
+import 'package:youatecone/services/you_ate_api.dart';
+
+bool _didThrow = false;
 
 class CaptureDaySummary {
   final List<Capture> captures;
@@ -45,10 +50,21 @@ class CaptureItemDesc {
   factory CaptureItemDesc.fromSummary(CaptureDaySummary summary) => CaptureItemDesc(CaptureItemType.summary, summary);
 }
 
-class CaptureOverviewLandingViewModel extends ChangeNotifier {
+class CaptureOverviewLandingViewModel extends ChangeNotifier with CLERModel {
+  final YouAteApi api;
+
+  CaptureOverviewLandingViewModel({@required this.api});
+
+  @override
   bool get loading => _loading;
 
-  List<Capture> get captures => _captures;
+  @override
+  String get error => _error;
+
+  @override
+  bool get hasData => captures.isNotEmpty;
+
+  List<Capture> get captures => _captures ?? [];
 
   List<CaptureItemDesc> get itemDescriptions => _itemDescriptions;
 
@@ -56,24 +72,24 @@ class CaptureOverviewLandingViewModel extends ChangeNotifier {
   List<CaptureItemDesc> _itemDescriptions;
 
   bool _loading = false;
+  String _error;
 
   Future<void> updateContents() async {
     if (_captures != null) return;
     _setLoadingAndNotify(true);
 
-    _captures = await _loadModelData();
-    final summaries = _calculateDaySummaries(_captures);
-    _itemDescriptions = _buildCaptureItemList(summaries);
+    try {
+      _captures = await api.getCaptures();
+      final summaries = _calculateDaySummaries(_captures);
 
-    await Future.delayed(Duration(seconds: 2));
-
-    _setLoadingAndNotify(false);
-  }
-
-  Future<List<Capture>> _loadModelData() async {
-    String jsonString = await rootBundle.loadString('assets/data/basic_captures.json');
-    final jsonContent = json.decode(jsonString);
-    return CaptureHistory.fromJson(jsonContent).items;
+      _itemDescriptions = _buildCaptureItemList(summaries);
+      _error = null;
+    } catch (e) {
+      _itemDescriptions = null;
+      _error = 'Could not get captures. Please try again later.';
+    } finally {
+      _setLoadingAndNotify(false);
+    }
   }
 
   List<CaptureDaySummary> _calculateDaySummaries(List<Capture> captures) {

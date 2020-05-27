@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:youatecone/services/you_ate_api.dart';
 import 'package:youatecone/you_ate_home.dart';
+
+final youAteApi = YouAteApi();
 
 void main() {
   runApp(YouAteApp());
@@ -18,4 +21,3 @@ class YouAteApp extends StatelessWidget {
     );
   }
 }
-
