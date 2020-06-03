@@ -6,8 +6,11 @@ import 'package:youatecone/capture/capture_list.dart';
 import 'package:youatecone/capture/capture_overview_landing_view_model.dart';
 import 'package:youatecone/content/cler_content.dart';
 import 'package:youatecone/main.dart';
+import 'package:youatecone/services/login_assistant.dart';
 
 class CaptureOverviewLanding extends StatefulWidget {
+  const CaptureOverviewLanding({Key key}) : super(key: key);
+
   @override
   _CaptureOverviewLandingState createState() => _CaptureOverviewLandingState();
 }
@@ -42,14 +45,39 @@ class _CaptureOverviewLandingState extends State<CaptureOverviewLanding> {
     );
   }
 
-  Widget _buildLoadingIndicator() {
-    return Container(
-      child: Center(child: CircularProgressIndicator()),
-    );
+  Future<void> _onCaptureSelected(BuildContext context, Capture capture) async {
+    final loginService = LoginService.of(context);
+
+    if (loginService.loggedIn) {
+      _showBlockerDialog(context);
+    } else {
+      final route = MaterialPageRoute(builder: (context) => CaptureDetails(), fullscreenDialog: true);
+      Navigator.of(context).push(route);
+    }
   }
 
-  Future<void> _onCaptureSelected(BuildContext context, Capture capture) async {
-    final route = MaterialPageRoute(builder: (context) => CaptureDetails(), fullscreenDialog: true);
-    Navigator.of(context).push(route);
+  void _showBlockerDialog(BuildContext context) {
+    showCupertinoDialog(
+      context: context,
+      builder: (context) {
+        return CupertinoAlertDialog(
+          title: Text('Info'),
+          content: Text('You have to login to view the details.'),
+          actions: [
+            CupertinoDialogAction(
+              child: Text('Ok'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            CupertinoDialogAction(
+              child: Text('Cancel'),
+              onPressed: () => Navigator.of(context).pop(),
+              isDestructiveAction: true,
+            ),
+          ],
+        );
+      },
+    );
   }
 }

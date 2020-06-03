@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:youatecone/capture/capture_overview_landing.dart';
+import 'package:youatecone/profile/profile_landing.dart';
 
 class YouAteHome extends StatefulWidget {
   final int initialTabIndex;
@@ -40,16 +41,6 @@ class _YouAteHomeState extends State<YouAteHome> {
         currentIndex: _selectedTabIndex,
         onTap: (index) => setState(() => _selectedTabIndex = index),
       ),
-    );
-  }
-}
-
-class Profile extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.blue,
-      child: Center(child: Icon(Icons.face, size: 200)),
     );
   }
 }

@@ -26,6 +26,7 @@ class _CaptureDetailsState extends State<CaptureDetails> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+//        elevation: 12,
         leading: IconButton(icon: Icon(Icons.close), onPressed: () => Navigator.of(context).pop()),
         title: Text('Details'),
       ),
